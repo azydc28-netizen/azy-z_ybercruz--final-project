@@ -1,0 +1,178 @@
+import random
+import sys
+
+# --- OPERATOR SETUP ---
+operator = {
+    "name": "",
+    "rank": "Recruit",
+    "xp": 0,
+    "hp": 100,
+    "team": "",
+    "weapon": None
+}
+
+ranks = ["Recruit", "Private", "Corporal", "Sergeant", "Lieutenant", "Captain", "Major"]
+
+teams = {
+    "1": "Alpha Team – Direct Assault",
+    "2": "Bravo Team – Recon & Stealth",
+    "3": "Charlie Team – Heavy Support"
+}
+
+weapons = {
+    "AR1": {"name": "M4A1", "type": "Assault Rifle", "damage": 25, "cost": 0},
+    "AR2": {"name": "HK416", "type": "Assault Rifle", "damage": 28, "cost": 40},
+    "AR3": {"name": "AK-74M", "type": "Assault Rifle", "damage": 30, "cost": 50},
+    "SMG1": {"name": "MP5", "type": "SMG", "damage": 20, "cost": 30},
+    "SMG2": {"name": "UMP45", "type": "SMG", "damage": 23, "cost": 45},
+    "SMG3": {"name": "Vector", "type": "SMG", "damage": 26, "cost": 60},
+    "SR1": {"name": "M40A5", "type": "Sniper", "damage": 45, "cost": 70},
+    "SR2": {"name": "L115A3", "type": "Sniper", "damage": 55, "cost": 90},
+    "LMG1": {"name": "M249 SAW", "type": "LMG", "damage": 35, "cost": 80},
+    "LMG2": {"name": "PKM", "type": "LMG", "damage": 38, "cost": 90},
+    "SG1": {"name": "M870", "type": "Shotgun", "damage": 40, "cost": 50},
+    "SG2": {"name": "SPAS-12", "type": "Shotgun", "damage": 45, "cost": 65},
+    "P1": {"name": "Glock 17", "type": "Pistol", "damage": 15, "cost": 10},
+    "P2": {"name": "M1911", "type": "Pistol", "damage": 18, "cost": 20}
+}
+
+missions = {
+    "1": "Hostage Rescue",
+    "2": "Search and Destroy",
+    "3": "Covert Infiltration",
+    "4": "Direct Assault",
+    "5": "High-Value Target Elimination"
+}
+
+difficulties = {
+    "1": ("Easy", 0.8),
+    "2": ("Normal", 1.0),
+    "3": ("Hard", 1.3),
+    "4": ("Extreme", 1.6)
+}
+
+# --- START ---
+print("=== SPECIAL TASK FORCE 457 \"RAZOR\" ===")
+operator["name"] = input("Soldier, state your callsign: ").strip()
+operator["weapon"] = weapons["AR1"]
+
+# Team Selection
+print("\nAlright, pick your team, soldier:")
+for k, v in teams.items():
+    print(f"{k}. {v}")
+operator["team"] = teams.get(input("Team number: ").strip(), teams["1"])
+print(f"Roger that. You are now part of {operator['team']}.")
+
+# --- MAIN LOOP ---
+while True:
+    # Update rank based on XP
+    level = operator["xp"] // 150
+    operator["rank"] = ranks[min(level, len(ranks)-1)]
+
+    print("\n--- COMMAND MENU ---")
+    print("1. Check Profile")
+    print("2. Change Team")
+    print("3. Visit Armory")
+    print("4. Start Mission")
+    print("5. Exit Operation")
+    choice = input("What’s your command, Commander? ").strip()
+
+    # PROFILE
+    if choice == "1":
+        print("\n=== OPERATOR STATUS ===")
+        print(f"Callsign : {operator['name']}")
+        print(f"Rank     : {operator['rank']}")
+        print(f"XP       : {operator['xp']}")
+        print(f"Team     : {operator['team']}")
+        print(f"Weapon   : {operator['weapon']['name']} ({operator['weapon']['type']})")
+        print(f"Health   : {operator['hp']}")
+
+    # TEAM CHANGE
+    elif choice == "2":
+        print("\nChoose a new team:")
+        for k, v in teams.items():
+            print(f"{k}. {v}")
+        operator["team"] = teams.get(input("Team number: ").strip(), operator["team"])
+        print(f"Team updated to {operator['team']}.")
+
+    # ARMORY
+    elif choice == "3":
+        print("\n=== ARMORY ===")
+        print(f"Your available XP: {operator['xp']}")
+        for code, w in weapons.items():
+            print(f"{code} | {w['name']} [{w['type']}] DMG:{w['damage']} | Cost:{w['cost']} XP")
+        choice_weapon = input("Pick weapon code: ").upper().strip()
+        if choice_weapon in weapons:
+            weapon = weapons[choice_weapon]
+            if operator["xp"] >= weapon["cost"]:
+                operator["weapon"] = weapon
+                operator["xp"] -= weapon["cost"]
+                print(f"Weapon equipped: {weapon['name']}")
+            else:
+                print("Insufficient XP, soldier.")
+        else:
+            print("Invalid weapon code.")
+
+    # MISSION
+    elif choice == "4":
+        print("\nSelect Mission:")
+        for k, v in missions.items():
+            print(f"{k}. {v}")
+        mission = missions.get(input("Mission number: ").strip(), missions["2"])
+
+        print("\nSelect Difficulty:")
+        for k, v in difficulties.items():
+            print(f"{k}. {v[0]}")
+        difficulty = difficulties.get(input("Difficulty number: ").strip(), difficulties["2"])
+
+        enemy_hp = int(150 * difficulty[1])
+        player_hp = operator["hp"]
+
+        print(f"\n🚁 Deploying on: {mission}")
+        print(f"Weapon: {operator['weapon']['name']} | Difficulty: {difficulty[0]}")
+        print("-"*40)
+
+        while player_hp > 0 and enemy_hp > 0:
+            print(f"\nYour HP: {player_hp} | Enemy HP: {enemy_hp}")
+            print("1. Fire Weapon")
+            print("2. Tactical Maneuver")
+            print("3. Retreat")
+            action = input("Your move: ").strip()
+
+            if action == "1":
+                damage = random.randint(operator["weapon"]["damage"] - 5, operator["weapon"]["damage"] + 15)
+                enemy_hp -= damage
+                print(f"Direct hit! Enemy takes {damage} damage.")
+
+            elif action == "2":
+                heal = random.randint(8, 20)
+                player_hp += heal
+                print(f"Tactical maneuver successful. Recovered {heal} HP.")
+
+            elif action == "3":
+                print("Mission aborted. Returning to base...")
+                operator["hp"] = max(50, player_hp - 15)
+                break
+
+            enemy_attack = int(random.randint(12, 30) * difficulty[1])
+            player_hp -= enemy_attack
+            print(f"Enemy fires! You take {enemy_attack} damage.")
+
+        # Mission result
+        if player_hp > 0 and enemy_hp <= 0:
+            gained_xp = int(70 * difficulty[1])
+            operator["xp"] += gained_xp
+            print(f"\nMISSION SUCCESS! XP gained: {gained_xp}")
+        elif player_hp <= 0:
+            operator["hp"] -= 25
+            print("\nMission failed. Regroup and try again.")
+
+        operator["hp"] = max(50, player_hp)
+
+    # EXIT
+    elif choice == "5":
+        print("Operation terminated. Good work, Commander.")
+        sys.exit()
+
+    else:
+        print("Invalid command. Stay sharp, soldier!")
