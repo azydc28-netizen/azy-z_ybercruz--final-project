@@ -6,7 +6,7 @@
 
 ---
 
-### **COMMANDER, LISTEN UP**
+### **HEY, YOU THERE! LISTEN UP!**
 
 You are now **active duty** in **Special Task Force 457 "RAZOR"**. All communications are operational. Your callsign will define your mission. Follow orders, choose your team, and complete objectives. Lives depend on your decisions.
 
