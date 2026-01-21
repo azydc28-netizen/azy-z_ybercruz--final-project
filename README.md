@@ -162,7 +162,6 @@ Rank updates occur inside the main loop and require no manual input.
 - Uses only standard libraries:
   - `random`
   - `sys`
-- No functions (`def`) are used
 - All logic runs sequentially
 - No save system (progress resets on restart)
 - Designed for clarity and learning, not optimization
